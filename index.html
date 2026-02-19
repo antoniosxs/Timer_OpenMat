@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OPENMAT PRO Timer</title>
+    <link rel="manifest" href="data:application/json;charset=utf-8,%7B%22name%22%3A%22OPENMAT%22%2C%22display%22%3A%22standalone%22%2C%22theme_color%22%3A%22%23000000%22%7D">
+    
+    <style>
+        :root {
+            --bg-color: #050505; /* Casi negro absoluto */
+            --card-bg: #1e1e1e;
+            --neon-red: #FF2400; 
+            --neon-blue: #00F3FF;
+            --dim-gray: #333333;
+            --font-main: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            --stroke-width: 6; /* Grosor de la línea del círculo */
+        }
+
+        body {
+            margin: 0;
+            background-color: var(--bg-color);
+            color: white;
+            font-family: var(--font-main);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+            transition: background-color 0.5s;
+        }
+
+        /* HEADER & LOGO */
+        header {
+            position: absolute;
+            top: 2vh;
+            z-index: 10;
+        }
+        #logo {
+            height: 8vh;
+            filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.2));
+        }
+
+        /* MAIN CONTAINER */
+        .timer-container {
+            position: relative;
+            width: 70vh; /* El tamaño del círculo depende de la altura de la TV */
+            height: 70vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 5vh;
+        }
+
+        /* SVG CIRCLE STYLES */
+        .progress-ring {
+            transform: rotate(-90deg); /* Empezar a las 12 en punto */
+            transform-origin: 50% 50%;
+            width: 100%;
+            height: 100%;
+            overflow: visible; /* Permitir brillo fuera del SVG */
+        }
+
+        .progress-ring__circle-track {
+            stroke: var(--dim-gray);
+            stroke-width: var(--stroke-width);
+            fill: transparent;
+        }
+
+        .progress-ring__circle {
+            stroke: var(--neon-red);
+            stroke-width: var(--stroke-width);
+            stroke-linecap: round; /* Bordes redondeados */
+            fill: transparent;
+            /* La magia del círculo */
+            stroke-dasharray: 283; /* 2 * PI * radio (45) aprox */
+            stroke-dashoffset: 0; 
+            transition: stroke-dashoffset 1s linear, stroke 0.3s ease;
+            filter: drop-shadow(0 0 10px var(--neon-red));
+        }
+
+        /* TEXT INSIDE CIRCLE */
+        .timer-text {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        #status-label {
+            font-size: 4vh;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: #888;
+            margin-bottom: 0vh;
+        }
+
+        #time-display {
+            font-size: 20vh;
+            font-weight: 700;
+            line-height: 1;
+            font-variant-numeric: tabular-nums;
+            text-shadow: 0 0 20px rgba(255, 36, 0, 0.4);
+            transition: color 0.3s ease, text-shadow 0.3s ease;
+        }
+
+        #round-display {
+            font-size: 4vh;
+            color: #aaa;
+            margin-top: 1vh;
+            font-weight: 300;
+        }
+
+        /* CONTROLS (BOTTOM) */
+        .controls-wrapper {
+            position: absolute;
+            bottom: 3vh;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            z-index: 10;
+        }
+
+        button {
+            background: #222;
+            border: 1px solid #444;
+            color: white;
+            padding: 1.2vh 2vw;
+            font-size: 2vh;
+            cursor: pointer;
+            border-radius: 5px;
+            text-transform: uppercase;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+
+        button:hover { background: #333; transform: scale(1.05); }
+        button.active { background: var(--neon-red); border-color: var(--neon-red); color: black; box-shadow: 0 0 15px var(--neon-red); }
+
+        .btn-action { min-width: 120px; font-size: 2.2vh; background: white; color: black; border: none;}
+        
+        /* Rounds Input */
+        .rounds-input-group {
+            display: flex;
+            align-items: center;
+            background: #222;
+            padding: 5px 15px;
+            border-radius: 5px;
+            border: 1px solid #444;
+            color: #aaa;
+            font-size: 1.8vh;
+        }
+        
+        input[type="number"] {
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 2.2vh;
+            width: 50px;
+            text-align: center;
+            font-weight: bold;
+            font-family: var(--font-main);
+        }
+        input:focus { outline: none; }
+
+        /* --- STATE MODES --- */
+        
+        /* REST MODE (Blue) */
+        body.mode-rest .progress-ring__circle {
+            stroke: var(--neon-blue);
+            filter: drop-shadow(0 0 15px var(--neon-blue));
+        }
+        body.mode-rest #time-display {
+            color: var(--neon-blue);
+            text-shadow: 0 0 20px rgba(0, 243, 255, 0.4);
+        }
+        body.mode-rest button.active {
+            background: var(--neon-blue);
+            box-shadow: 0 0 15px var(--neon-blue);
+        }
+
+        /* PULSE ANIMATION (Last 10 seconds) */
+        @keyframes pulse-red {
+            0% { filter: drop-shadow(0 0 10px var(--neon-red)); }
+            50% { filter: drop-shadow(0 0 30px var(--neon-red)); }
+            100% { filter: drop-shadow(0 0 10px var(--neon-red)); }
+        }
+        @keyframes pulse-blue {
+            0% { filter: drop-shadow(0 0 10px var(--neon-blue)); }
+            50% { filter: drop-shadow(0 0 30px var(--neon-blue)); }
+            100% { filter: drop-shadow(0 0 10px var(--neon-blue)); }
+        }
+
+        body.pulse-red .progress-ring__circle { animation: pulse-red 1s infinite; }
+        body.pulse-blue .progress-ring__circle { animation: pulse-blue 1s infinite; }
+
+    </style>
+</head>
+<body class="mode-work">
+
+    <header>
+        <img src="OPENMAT LOGO BLANCO.png" alt="OPENMAT" id="logo" onerror="this.style.display='none'; document.querySelector('header').innerText='OPENMAT'">
+    </header>
+
+    <div class="timer-container">
+        <svg class="progress-ring" viewBox="0 0 100 100">
+            <circle class="progress-ring__circle-track" cx="50" cy="50" r="45" />
+            <circle class="progress-ring__circle" cx="50" cy="50" r="45" />
+        </svg>
+
+        <div class="timer-text">
+            <div id="status-label">LISTO</div>
+            <div id="time-display">00:00</div>
+            <div id="round-display">RND 1</div>
+        </div>
+    </div>
+
+    <div class="controls-wrapper">
+        <button class="btn-mode active" onclick="setMode('bjj', this)">BJJ (5/20)</button>
+        <button class="btn-mode" onclick="setMode('box45', this)">Box (45s)</button>
+        <button class="btn-mode" onclick="setMode('box60', this)">Box (1m)</button>
+        
+        <div class="rounds-input-group">
+            <span style="margin-right:10px">MAX RNDS:</span>
+            <input type="number" id="max-rounds" value="10" min="1" max="99">
+        </div>
+
+        <button id="btn-start" class="btn-action" onclick="toggleTimer()">START</button>
+        <button class="btn-action" style="background:#444; color:white;" onclick="resetTimer()">RESET</button>
+    </div>
+
+    <script>
+        // --- AUDIO ENGINE ---
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function beep(freq = 800, duration = 200, type = 'square', vol = 1) {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            osc.frequency.value = freq;
+            osc.type = type;
+            gainNode.gain.value = vol;
+            osc.start();
+            setTimeout(() => osc.stop(), duration);
+        }
+        const sndStart = () => { beep(800, 100); setTimeout(()=>beep(1200, 400), 100); }; // High-Low
+        const sndRest = () => { beep(600, 100); setTimeout(()=>beep(400, 400), 100); }; // Low-High
+        const sndCount = () => beep(800, 100, 'sine');
+        const sndEnd = () => { beep(800, 150); setTimeout(()=>beep(800, 150), 200); setTimeout(()=>beep(800, 400), 400); };
+
+        // --- TIMER LOGIC ---
+        const circle = document.querySelector('.progress-ring__circle');
+        const radius = circle.r.baseVal.value;
+        const circumference = radius * 2 * Math.PI;
+        
+        // Setup SVG dash
+        circle.style.strokeDasharray = `${circumference} ${circumference}`;
+        circle.style.strokeDashoffset = 0;
+
+        let timerInterval;
+        let timeLeft = 0;
+        let totalTime = 0; // For calculation %
+        let currentMode = 'bjj'; // bjj, box45, box60
+        let state = 'stopped'; // stopped, work, rest, finished
+        let round = 1;
+        
+        const modes = {
+            'bjj':   { work: 300, rest: 20 },
+            'box45': { work: 45,  rest: 15 },
+            'box60': { work: 60,  rest: 15 }
+        };
+
+        const els = {
+            time: document.getElementById('time-display'),
+            status: document.getElementById('status-label'),
+            round: document.getElementById('round-display'),
+            btnStart: document.getElementById('btn-start'),
+            maxRoundsInput: document.getElementById('max-rounds'),
+            body: document.body
+        };
+
+        function setProgress(percent) {
+            const offset = circumference - (percent / 100) * circumference;
+            circle.style.strokeDashoffset = offset;
+        }
+
+        function formatTime(s) {
+            const m = Math.floor(s / 60);
+            const sec = s % 60;
+            return `${m < 10 ? '0' : ''}${m}:${sec < 10 ? '0' : ''}${sec}`;
+        }
+
+        function setMode(modeName, btnElement) {
+            currentMode = modeName;
+            document.querySelectorAll('.btn-mode').forEach(b => b.classList.remove('active'));
+            if(btnElement) btnElement.classList.add('active');
+            resetTimer();
+        }
+
+        function resetTimer() {
+            clearInterval(timerInterval);
+            state = 'stopped';
+            round = 1;
+            timeLeft = modes[currentMode].work;
+            totalTime = modes[currentMode].work;
+            
+            // UI Reset
+            els.time.innerText = formatTime(timeLeft);
+            els.status.innerText = "LISTO";
+            els.status.style.color = "#888";
+            els.round.innerText = "RND 1";
+            els.btnStart.innerText = "START";
+            els.btnStart.style.background = "white";
+            
+            // Visual Reset
+            setProgress(100);
+            els.body.className = 'mode-work'; // Reset colors to red
+        }
+
+        function toggleTimer() {
+            if (state === 'stopped' || state === 'paused') {
+                startTimer();
+            } else {
+                pauseTimer();
+            }
+        }
+
+        function startTimer() {
+            if (state === 'finished') { resetTimer(); return; }
+            
+            // If starting fresh
+            if (state === 'stopped') {
+                state = 'work';
+                els.status.innerText = "LUCHA";
+                sndStart();
+            } else if (state === 'paused') {
+                state = (els.body.classList.contains('mode-rest')) ? 'rest' : 'work';
+            }
+
+            els.btnStart.innerText = "PAUSA";
+            els.btnStart.style.background = "#fff100"; // Yellow warning
+
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                
+                // Update Text
+                els.time.innerText = formatTime(timeLeft);
+                
+                // Update Circle
+                const percentage = (timeLeft / totalTime) * 100;
+                setProgress(percentage);
+
+                // Animations & Sound
+                if (timeLeft <= 10 && timeLeft > 0) {
+                    els.body.classList.add(state === 'work' ? 'pulse-red' : 'pulse-blue');
+                }
+                if (timeLeft <= 3 && timeLeft > 0) sndCount();
+
+                // Phase Change
+                if (timeLeft === 0) {
+                    switchPhase();
+                }
+            }, 1000);
+        }
+
+        function pauseTimer() {
+            clearInterval(timerInterval);
+            state = 'paused';
+            els.btnStart.innerText = "RESUME";
+            els.btnStart.style.background = "white";
+            els.body.classList.remove('pulse-red', 'pulse-blue');
+        }
+
+        function switchPhase() {
+            clearInterval(timerInterval);
+            els.body.classList.remove('pulse-red', 'pulse-blue');
+
+            const maxRounds = parseInt(els.maxRoundsInput.value) || 99;
+
+            if (state === 'work') {
+                // Work -> Rest
+                if (round >= maxRounds) {
+                    finishSession();
+                    return;
+                }
+                state = 'rest';
+                timeLeft = modes[currentMode].rest;
+                totalTime = modes[currentMode].rest;
+                els.status.innerText = "DESCANSO";
+                els.body.className = 'mode-rest'; // Switch to Blue
+                sndRest();
+                setProgress(100);
+                startTimer();
+            } else {
+                // Rest -> Work
+                state = 'work';
+                round++;
+                els.round.innerText = "RND " + round;
+                timeLeft = modes[currentMode].work;
+                totalTime = modes[currentMode].work;
+                els.status.innerText = "LUCHA";
+                els.body.className = 'mode-work'; // Switch to Red
+                sndStart();
+                setProgress(100);
+                startTimer();
+            }
+        }
+
+        function finishSession() {
+            state = 'finished';
+            els.status.innerText = "TERMINADO";
+            els.status.style.color = "#fff";
+            els.time.innerText = "OSS";
+            els.btnStart.innerText = "REINICIAR";
+            els.btnStart.style.background = "#fff";
+            setProgress(0);
+            sndEnd();
+        }
+
+        // Init
+        resetTimer();
+    </script>
+</body>
+</html>
