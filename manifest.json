@@ -1,0 +1,23 @@
+{
+  "name": "OPENMAT Timer PRO",
+  "short_name": "OPENMAT",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#050505",
+  "theme_color": "#FF2400",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "OPENMAT LOGO BLANCO.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "OPENMAT LOGO BLANCO.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
