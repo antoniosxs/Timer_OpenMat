@@ -67,7 +67,7 @@
         <img src="OPENMAT LOGO BLANCO.png" alt="OPENMAT" class="h-12 lg:h-20 drop-shadow-[0_0_8px_rgba(0,0,0,0.8)]" onerror="this.style.display='none'; document.querySelector('header').innerText='OPENMAT'">
     </header>
 
-    <main class="w-full flex-grow flex flex-col lg:flex-row items-center justify-center relative gap-6 z-10">
+    <main class="w-full flex-grow flex flex-col lg:flex-row items-center justify-center relative gap-6 z-50">
         
         <div class="relative flex items-center justify-center w-[60vmin] h-[60vmin] lg:w-[45vmin] lg:h-[45vmin] max-w-[500px] max-h-[500px]">
             <svg class="progress-ring absolute inset-0" viewBox="0 0 100 100">
@@ -81,7 +81,7 @@
             </div>
         </div>
 
-        <div id="score-panel" class="w-full lg:w-auto flex flex-row lg:flex-col justify-center gap-2 lg:gap-4 lg:absolute lg:right-0">
+        <div id="score-panel" class="w-full lg:w-auto flex flex-row lg:flex-col justify-center gap-2 lg:gap-4 lg:absolute lg:right-4 lg:top-1/2 lg:-translate-y-1/2 z-50">
             
             <div class="bg-panel backdrop-blur-sm rounded-lg border-l-4 border-bjjGreen p-2 lg:p-4 w-1/2 lg:w-[220px] shadow-[0_0_15px_rgba(0,0,0,0.6)]">
                 <div class="text-bjjGreen font-extrabold text-center text-sm lg:text-lg tracking-wider">VERDE</div>
@@ -120,7 +120,7 @@
         </div>
     </main>
 
-    <footer class="w-full max-w-5xl flex flex-col gap-3 items-center mt-4 z-10 flex-shrink-0">
+    <footer class="w-full max-w-5xl flex flex-col gap-3 items-center mt-4 z-0 flex-shrink-0">
         
         <div class="flex flex-wrap justify-center gap-2 w-full">
             <button class="btn-mode active bg-panel border border-gray-600 hover:bg-gray-800 text-white font-bold py-2 px-3 lg:px-4 rounded uppercase text-sm lg:text-base focus:ring-2 focus:ring-white transition [&.active]:bg-brandRed [&.active]:text-black [&.active]:border-brandRed [&.active]:shadow-[0_0_15px_#FF2400]" onclick="setMode('bjj4', this)">4M</button>
