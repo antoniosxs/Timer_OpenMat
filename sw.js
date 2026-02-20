@@ -1,5 +1,5 @@
 // CADA VEZ QUE HAGAS UN CAMBIO EN EL HTML, CAMBIA ESTE NÚMERO (ej: v2, v3, v4...)
-const CACHE_NAME = 'openmat-timer-v2'; 
+const CACHE_NAME = 'openmat-timer-v3.1'; 
 
 const urlsToCache = [
   './',
@@ -47,4 +47,5 @@ self.addEventListener('fetch', event => {
         return response || fetch(event.request);
       })
   );
+
 });
