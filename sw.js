@@ -1,4 +1,4 @@
-const CACHE_NAME = 'openmat-timer-v2';
+const CACHE_NAME = 'openmat-timer-v2.1';
 const urlsToCache = [
   './',
   './index.html',
@@ -26,3 +26,4 @@ self.addEventListener('fetch', event => {
   );
 
 });
+
