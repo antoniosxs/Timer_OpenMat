@@ -23,17 +23,17 @@
             font-family: var(--font-main);
             display: flex;
             flex-direction: column;
-            justify-content: space-between; /* Distribuye arriba, centro y abajo */
+            justify-content: space-between;
             align-items: center;
             height: 100vh;
-            height: 100dvh; /* dvh evita problemas con la barra de navegación en móviles */
+            height: 100dvh;
             box-sizing: border-box;
             padding: 2vmin;
             overflow: hidden;
             transition: background-color 0.5s;
         }
 
-        /* HEADER & LOGO (Arriba) */
+        /* HEADER & LOGO */
         header {
             flex: 0 1 auto;
             display: flex;
@@ -43,26 +43,26 @@
         }
         
         #logo {
-            height: 10vmin; /* Escala con la pantalla */
-            max-height: 80px; /* Límite para que no sea gigante en la TV */
+            height: 10vmin; 
+            max-height: 80px; 
             filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.2));
         }
 
-        /* MAIN CONTAINER (Centro) */
+        /* MAIN CONTAINER */
         .timer-container {
             flex: 1 1 auto;
             position: relative;
-            width: 65vmin; /* El secreto de la responsividad: 65% del lado más pequeño */
-            height: 65vmin;
-            max-width: 600px; /* Límite máximo en pantallas muy grandes */
-            max-height: 600px;
+            width: 60vmin; 
+            height: 60vmin;
+            max-width: 550px; 
+            max-height: 550px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: auto; /* Lo empuja exactamente al centro */
+            margin: auto; 
         }
 
-        /* SVG CIRCLE STYLES */
+        /* SVG CIRCLE */
         .progress-ring {
             transform: rotate(-90deg);
             transform-origin: 50% 50%;
@@ -99,14 +99,14 @@
         }
 
         #status-label {
-            font-size: 4vmin; /* Escala con la pantalla */
+            font-size: 3.5vmin;
             letter-spacing: 0.2em;
             text-transform: uppercase;
             color: #888;
         }
 
         #time-display {
-            font-size: 18vmin;
+            font-size: 16vmin;
             font-weight: 700;
             line-height: 1;
             font-variant-numeric: tabular-nums;
@@ -115,32 +115,40 @@
         }
 
         #round-display {
-            font-size: 4vmin;
+            font-size: 3.5vmin;
             color: #aaa;
             margin-top: 1vmin;
             font-weight: 300;
         }
 
-        /* CONTROLS (Abajo) */
+        /* CONTROLS AREA */
         .controls-wrapper {
             flex: 0 1 auto;
             display: flex;
+            flex-direction: column;
             gap: 10px;
             align-items: center;
             justify-content: center;
-            flex-wrap: wrap; /* Si no caben en una línea, bajan a la siguiente */
             width: 100%;
             max-width: 900px;
             margin-bottom: 2vmin;
+        }
+
+        .controls-row {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+            width: 100%;
         }
 
         button {
             background: #222;
             border: 2px solid transparent;
             color: white;
-            padding: 1.5vmin 3vmin;
-            font-size: 2.5vmin; /* Botones más amigables al tacto */
-            min-height: 44px; /* Estándar mínimo para tocar en móviles */
+            padding: 1.5vmin 2.5vmin;
+            font-size: 2.2vmin;
+            min-height: 44px;
             cursor: pointer;
             border-radius: 5px;
             text-transform: uppercase;
@@ -148,41 +156,39 @@
             transition: all 0.2s;
         }
 
-        /* TV Focus */
         button:focus {
             outline: none;
             border: 2px solid white;
             box-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
             transform: scale(1.05);
             background: #444;
+            z-index: 10;
         }
 
         button:hover { background: #333; }
-        button.active { background: var(--neon-red); color: black; box-shadow: 0 0 15px var(--neon-red); }
+        button.active { background: var(--neon-red); color: black; box-shadow: 0 0 10px var(--neon-red); }
 
-        .btn-action { min-width: 100px; background: white; color: black; border: 2px solid transparent;}
+        .btn-action { min-width: 100px; background: white; color: black; }
+        .btn-round { background: #444; padding: 5px 15px; font-size: 2.5vmin;}
         
-        /* Rounds Control */
-        .rounds-input-group {
+        .panel-group {
             display: flex;
             align-items: center;
             background: #222;
-            padding: 5px 15px;
+            padding: 5px 10px;
             border-radius: 5px;
             color: #aaa;
-            font-size: 2.5vmin;
+            font-size: 2vmin;
             gap: 10px;
             min-height: 44px;
         }
         
-        #max-rounds-display {
+        .disp-text {
             color: white;
             font-weight: bold;
-            min-width: 30px;
             text-align: center;
+            font-size: 2.5vmin;
         }
-
-        .btn-round { background: #444; padding: 5px 15px; }
 
         /* MODES & ANIMATIONS */
         body.mode-rest .progress-ring__circle { stroke: var(--neon-blue); filter: drop-shadow(0 0 15px var(--neon-blue)); }
@@ -195,12 +201,11 @@
         body.pulse-red .progress-ring__circle { animation: pulse-red 1s infinite; }
         body.pulse-blue .progress-ring__circle { animation: pulse-blue 1s infinite; }
 
-        /* Media Query para pantallas MUY estrechas (Móviles en vertical) */
         @media (max-width: 600px) {
-            button { font-size: 3.5vmin; padding: 2vmin 4vmin;}
-            .rounds-input-group { font-size: 3.5vmin; }
+            button { font-size: 3vmin; padding: 2vmin 3vmin;}
+            .panel-group { font-size: 3vmin; }
+            .disp-text { font-size: 3.5vmin; }
         }
-
     </style>
 </head>
 <body class="mode-work">
@@ -214,7 +219,6 @@
             <circle class="progress-ring__circle-track" cx="50" cy="50" r="45" />
             <circle class="progress-ring__circle" cx="50" cy="50" r="45" />
         </svg>
-
         <div class="timer-text">
             <div id="status-label">LISTO</div>
             <div id="time-display">00:00</div>
@@ -223,19 +227,41 @@
     </div>
 
     <div class="controls-wrapper">
-        <button class="btn-mode active" onclick="setMode('bjj', this)">BJJ</button>
-        <button class="btn-mode" onclick="setMode('box45', this)">Box(45)</button>
-        <button class="btn-mode" onclick="setMode('box60', this)">Box(1m)</button>
-        
-        <div class="rounds-input-group">
-            <span>RNDS:</span>
-            <button class="btn-round" onclick="changeRounds(-1)">-</button>
-            <span id="max-rounds-display">10</span>
-            <button class="btn-round" onclick="changeRounds(1)">+</button>
+        <div class="controls-row">
+            <button class="btn-mode" onclick="setMode('bjj4', this)">4M</button>
+            <button class="btn-mode active" onclick="setMode('bjj5', this)">5M</button>
+            <button class="btn-mode" onclick="setMode('bjj6', this)">6M</button>
+            <button class="btn-mode" onclick="setMode('bjj10', this)">10M</button>
+            <button class="btn-mode" onclick="setMode('box45', this)">B45</button>
+            <button class="btn-mode" onclick="setMode('box60', this)">B60</button>
+            <button class="btn-mode" onclick="setMode('custom', this)">⚙️</button>
         </div>
 
-        <button id="btn-start" class="btn-action" onclick="toggleTimer()">START</button>
-        <button class="btn-action" style="background:#444; color:white;" onclick="resetTimer()">RESET</button>
+        <div id="custom-panel" class="controls-row" style="display: none;">
+            <div class="panel-group">
+                <span style="color:var(--neon-red)">LUCHA</span>
+                <button class="btn-round" onclick="adjCustom('work', -15)">-</button>
+                <span id="c-work-disp" class="disp-text" style="min-width: 50px;">05:00</span>
+                <button class="btn-round" onclick="adjCustom('work', 15)">+</button>
+            </div>
+            <div class="panel-group">
+                <span style="color:var(--neon-blue)">DESC</span>
+                <button class="btn-round" onclick="adjCustom('rest', -5)">-</button>
+                <span id="c-rest-disp" class="disp-text" style="min-width: 50px;">00:20</span>
+                <button class="btn-round" onclick="adjCustom('rest', 5)">+</button>
+            </div>
+        </div>
+
+        <div class="controls-row">
+            <div class="panel-group">
+                <span>RNDS</span>
+                <button class="btn-round" onclick="changeRounds(-1)">-</button>
+                <span id="max-rounds-display" class="disp-text" style="min-width: 30px;">10</span>
+                <button class="btn-round" onclick="changeRounds(1)">+</button>
+            </div>
+            <button id="btn-start" class="btn-action" onclick="toggleTimer()">START</button>
+            <button class="btn-action" style="background:#444; color:white;" onclick="resetTimer()">RESET</button>
+        </div>
     </div>
 
     <script>
@@ -269,15 +295,20 @@
         let timerInterval;
         let timeLeft = 0;
         let totalTime = 0; 
-        let currentMode = 'bjj'; 
+        let currentMode = 'bjj5'; 
         let state = 'stopped'; 
         let round = 1;
         let maxRoundsLimit = 10;
         
+        // Base de datos de Modos
         const modes = {
-            'bjj':   { work: 300, rest: 20 },
-            'box45': { work: 45,  rest: 15 },
-            'box60': { work: 60,  rest: 15 }
+            'bjj4':   { work: 240, rest: 20 },
+            'bjj5':   { work: 300, rest: 20 },
+            'bjj6':   { work: 360, rest: 20 },
+            'bjj10':  { work: 600, rest: 20 },
+            'box45':  { work: 45,  rest: 15 },
+            'box60':  { work: 60,  rest: 15 },
+            'custom': { work: 300, rest: 20 } // Valores por defecto del custom
         };
 
         const els = {
@@ -286,6 +317,9 @@
             round: document.getElementById('round-display'),
             btnStart: document.getElementById('btn-start'),
             maxRoundsDisplay: document.getElementById('max-rounds-display'),
+            customPanel: document.getElementById('custom-panel'),
+            cWorkDisp: document.getElementById('c-work-disp'),
+            cRestDisp: document.getElementById('c-rest-disp'),
             body: document.body
         };
 
@@ -302,8 +336,18 @@
 
         function setMode(modeName, btnElement) {
             currentMode = modeName;
+            
+            // Actualizar botones visuales
             document.querySelectorAll('.btn-mode').forEach(b => b.classList.remove('active'));
             if(btnElement) btnElement.classList.add('active');
+            
+            // Mostrar/Ocultar panel personalizado
+            if(modeName === 'custom') {
+                els.customPanel.style.display = 'flex';
+            } else {
+                els.customPanel.style.display = 'none';
+            }
+            
             resetTimer();
         }
 
@@ -312,6 +356,20 @@
             if(maxRoundsLimit < 1) maxRoundsLimit = 1;
             if(maxRoundsLimit > 99) maxRoundsLimit = 99;
             els.maxRoundsDisplay.innerText = maxRoundsLimit;
+        }
+
+        function adjCustom(type, delta) {
+            if(type === 'work') {
+                modes['custom'].work += delta;
+                if(modes['custom'].work < 15) modes['custom'].work = 15; // Mínimo 15 seg
+                els.cWorkDisp.innerText = formatTime(modes['custom'].work);
+            } else {
+                modes['custom'].rest += delta;
+                if(modes['custom'].rest < 0) modes['custom'].rest = 0; // Mínimo 0 seg
+                els.cRestDisp.innerText = formatTime(modes['custom'].rest);
+            }
+            // Si el modo actual es custom, resetear para aplicar cambios
+            if(currentMode === 'custom') resetTimer();
         }
 
         function resetTimer() {
@@ -389,26 +447,36 @@
                     finishSession();
                     return;
                 }
-                state = 'rest';
-                timeLeft = modes[currentMode].rest;
-                totalTime = modes[currentMode].rest;
-                els.status.innerText = "DESCANSO";
-                els.body.className = 'mode-rest'; 
-                sndRest();
-                setProgress(100);
-                startTimer();
+                // Entrar a descanso solo si hay tiempo de descanso
+                if(modes[currentMode].rest > 0) {
+                    state = 'rest';
+                    timeLeft = modes[currentMode].rest;
+                    totalTime = modes[currentMode].rest;
+                    els.status.innerText = "DESCANSO";
+                    els.body.className = 'mode-rest'; 
+                    sndRest();
+                    setProgress(100);
+                    startTimer();
+                } else {
+                    // Si el descanso es 0 (ej: custom mode sin descanso), pasar directo a la siguiente ronda
+                    startNextRound();
+                }
             } else {
-                state = 'work';
-                round++;
-                els.round.innerText = "RND " + round;
-                timeLeft = modes[currentMode].work;
-                totalTime = modes[currentMode].work;
-                els.status.innerText = "LUCHA";
-                els.body.className = 'mode-work'; 
-                sndStart();
-                setProgress(100);
-                startTimer();
+                startNextRound();
             }
+        }
+
+        function startNextRound() {
+            state = 'work';
+            round++;
+            els.round.innerText = "RND " + round;
+            timeLeft = modes[currentMode].work;
+            totalTime = modes[currentMode].work;
+            els.status.innerText = "LUCHA";
+            els.body.className = 'mode-work'; 
+            sndStart();
+            setProgress(100);
+            startTimer();
         }
 
         function finishSession() {
@@ -426,7 +494,6 @@
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./sw.js')
-                    .then(registration => console.log('SW registrado:', registration.scope))
                     .catch(error => console.log('SW Error:', error));
             });
         }
