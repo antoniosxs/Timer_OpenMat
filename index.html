@@ -9,9 +9,8 @@
     <style>
         :root {
             --bg-color: #050505;
-            --card-bg: #1e1e1e;
-            --neon-red: #ff7300; 
-            --neon-blue: #3c50aa;
+            --neon-red: #FF2400; 
+            --neon-blue: #00F3FF;
             --dim-gray: #333333;
             --font-main: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             --stroke-width: 6;
@@ -24,33 +23,43 @@
             font-family: var(--font-main);
             display: flex;
             flex-direction: column;
+            justify-content: space-between; /* Distribuye arriba, centro y abajo */
             align-items: center;
-            justify-content: center;
             height: 100vh;
+            height: 100dvh; /* dvh evita problemas con la barra de navegación en móviles */
+            box-sizing: border-box;
+            padding: 2vmin;
             overflow: hidden;
             transition: background-color 0.5s;
         }
 
-        /* HEADER & LOGO */
+        /* HEADER & LOGO (Arriba) */
         header {
-            position: absolute;
-            top: 2vh;
-            z-index: 10;
+            flex: 0 1 auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 2vmin;
         }
+        
         #logo {
-            height: 8vh;
+            height: 10vmin; /* Escala con la pantalla */
+            max-height: 80px; /* Límite para que no sea gigante en la TV */
             filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.2));
         }
 
-        /* MAIN CONTAINER */
+        /* MAIN CONTAINER (Centro) */
         .timer-container {
+            flex: 1 1 auto;
             position: relative;
-            width: 70vh; 
-            height: 70vh;
+            width: 65vmin; /* El secreto de la responsividad: 65% del lado más pequeño */
+            height: 65vmin;
+            max-width: 600px; /* Límite máximo en pantallas muy grandes */
+            max-height: 600px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-top: 5vh;
+            margin: auto; /* Lo empuja exactamente al centro */
         }
 
         /* SVG CIRCLE STYLES */
@@ -90,15 +99,14 @@
         }
 
         #status-label {
-            font-size: 4vh;
+            font-size: 4vmin; /* Escala con la pantalla */
             letter-spacing: 0.2em;
             text-transform: uppercase;
             color: #888;
-            margin-bottom: 0vh;
         }
 
         #time-display {
-            font-size: 20vh;
+            font-size: 18vmin;
             font-weight: 700;
             line-height: 1;
             font-variant-numeric: tabular-nums;
@@ -107,31 +115,32 @@
         }
 
         #round-display {
-            font-size: 4vh;
+            font-size: 4vmin;
             color: #aaa;
-            margin-top: 1vh;
+            margin-top: 1vmin;
             font-weight: 300;
         }
 
-        /* CONTROLS (BOTTOM) */
+        /* CONTROLS (Abajo) */
         .controls-wrapper {
-            position: absolute;
-            bottom: 3vh;
+            flex: 0 1 auto;
             display: flex;
-            gap: 15px;
+            gap: 10px;
             align-items: center;
-            z-index: 10;
-            flex-wrap: wrap;
             justify-content: center;
-            width: 90%;
+            flex-wrap: wrap; /* Si no caben en una línea, bajan a la siguiente */
+            width: 100%;
+            max-width: 900px;
+            margin-bottom: 2vmin;
         }
 
         button {
             background: #222;
             border: 2px solid transparent;
             color: white;
-            padding: 1.2vh 2vw;
-            font-size: 2vh;
+            padding: 1.5vmin 3vmin;
+            font-size: 2.5vmin; /* Botones más amigables al tacto */
+            min-height: 44px; /* Estándar mínimo para tocar en móviles */
             cursor: pointer;
             border-radius: 5px;
             text-transform: uppercase;
@@ -139,7 +148,7 @@
             transition: all 0.2s;
         }
 
-        /* ACCESIBILIDAD PARA EL CONTROL DE TV (D-PAD) */
+        /* TV Focus */
         button:focus {
             outline: none;
             border: 2px solid white;
@@ -151,9 +160,9 @@
         button:hover { background: #333; }
         button.active { background: var(--neon-red); color: black; box-shadow: 0 0 15px var(--neon-red); }
 
-        .btn-action { min-width: 120px; font-size: 2.2vh; background: white; color: black; border: 2px solid transparent;}
+        .btn-action { min-width: 100px; background: white; color: black; border: 2px solid transparent;}
         
-        /* Rounds Control for TV */
+        /* Rounds Control */
         .rounds-input-group {
             display: flex;
             align-items: center;
@@ -161,37 +170,36 @@
             padding: 5px 15px;
             border-radius: 5px;
             color: #aaa;
-            font-size: 1.8vh;
+            font-size: 2.5vmin;
             gap: 10px;
+            min-height: 44px;
         }
         
         #max-rounds-display {
             color: white;
-            font-size: 2.2vh;
             font-weight: bold;
             min-width: 30px;
             text-align: center;
-            display: inline-block;
         }
 
-        .btn-round {
-            padding: 5px 15px;
-            font-size: 2.5vh;
-            background: #444;
-            border-radius: 4px;
-        }
+        .btn-round { background: #444; padding: 5px 15px; }
 
-        /* --- STATE MODES --- */
+        /* MODES & ANIMATIONS */
         body.mode-rest .progress-ring__circle { stroke: var(--neon-blue); filter: drop-shadow(0 0 15px var(--neon-blue)); }
         body.mode-rest #time-display { color: var(--neon-blue); text-shadow: 0 0 20px rgba(0, 243, 255, 0.4); }
         body.mode-rest button.active { background: var(--neon-blue); box-shadow: 0 0 15px var(--neon-blue); }
 
-        /* PULSE ANIMATION */
         @keyframes pulse-red { 0% { filter: drop-shadow(0 0 10px var(--neon-red)); } 50% { filter: drop-shadow(0 0 30px var(--neon-red)); } 100% { filter: drop-shadow(0 0 10px var(--neon-red)); } }
         @keyframes pulse-blue { 0% { filter: drop-shadow(0 0 10px var(--neon-blue)); } 50% { filter: drop-shadow(0 0 30px var(--neon-blue)); } 100% { filter: drop-shadow(0 0 10px var(--neon-blue)); } }
 
         body.pulse-red .progress-ring__circle { animation: pulse-red 1s infinite; }
         body.pulse-blue .progress-ring__circle { animation: pulse-blue 1s infinite; }
+
+        /* Media Query para pantallas MUY estrechas (Móviles en vertical) */
+        @media (max-width: 600px) {
+            button { font-size: 3.5vmin; padding: 2vmin 4vmin;}
+            .rounds-input-group { font-size: 3.5vmin; }
+        }
 
     </style>
 </head>
@@ -215,12 +223,12 @@
     </div>
 
     <div class="controls-wrapper">
-        <button class="btn-mode active" onclick="setMode('bjj', this)">BJJ (5/20)</button>
-        <button class="btn-mode" onclick="setMode('box45', this)">Box (45s)</button>
-        <button class="btn-mode" onclick="setMode('box60', this)">Box (1m)</button>
+        <button class="btn-mode active" onclick="setMode('bjj', this)">BJJ</button>
+        <button class="btn-mode" onclick="setMode('box45', this)">Box(45)</button>
+        <button class="btn-mode" onclick="setMode('box60', this)">Box(1m)</button>
         
         <div class="rounds-input-group">
-            <span>MAX RNDS:</span>
+            <span>RNDS:</span>
             <button class="btn-round" onclick="changeRounds(-1)">-</button>
             <span id="max-rounds-display">10</span>
             <button class="btn-round" onclick="changeRounds(1)">+</button>
@@ -414,23 +422,17 @@
             sndEnd();
         }
 
-        // Init
-        resetTimer();
-    </script>
-</body>
-</html><script>
-        // Registrar el Service Worker para la PWA
+        // --- PWA SERVICE WORKER ---
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./sw.js')
-                    .then(registration => {
-                        console.log('SW registrado con éxito:', registration.scope);
-                    })
-                    .catch(error => {
-                        console.log('Error al registrar el SW:', error);
-                    });
+                    .then(registration => console.log('SW registrado:', registration.scope))
+                    .catch(error => console.log('SW Error:', error));
             });
         }
+
+        // Init
+        resetTimer();
     </script>
 </body>
 </html>
